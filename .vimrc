@@ -16,10 +16,9 @@ set guioptions+=!c
 call plug#begin('~/.vim/plugged')
 
 " Declare the list of plugins.
-Plug 'morhetz/gruvbox'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'qpkorr/vim-bufkill'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'morhetz/gruvbox'
 
 " List ends here. Plugins become visible to Vim after this call.
 call plug#end()
@@ -38,11 +37,9 @@ set autoindent                   " When opening a new line and no filetype-speci
 set laststatus=2                 " Always display the status line, even if only one window is displayed
 set confirm                      " Instead of failing a command because of unsaved changes, instead raise a  dialogue asking if you wish to save changed files
 set visualbell                   " Use visual bell instead of beeping when doing something wrong
-set number                       " Display line numbers on the left
 set ruler                        " Display cursor position
 set notimeout ttimeout ttimeoutlen=200  " Quickly time out on keycodes, but never time out on mappings
 set cindent
-set cursorline                    " Highlight the current line
 set clipboard+=unnamed            " Share windows clipboard
 set exrc                          " Enable Project Specific .vimrc
 
@@ -76,10 +73,6 @@ autocmd FileType * set tabstop=4
 autocmd FileType * set softtabstop=4
 autocmd FileType * set shiftwidth=4
 
-" Set the color theme to be used
-colors gruvbox
-set background=dark
-
 "Remove trailing whitespace on file save
 
 function! <SID>StripTrailingWhitespaces()
@@ -104,34 +97,3 @@ if has('gui_running')
 		au GUIEnter * simalt ~x " Maximize window on startup
 	endif
 endif
-
-" Coc
-
-" Use `g[` and `g]` to navigate diagnostics
-" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-nmap <silent> g[ <Plug>(coc-diagnostic-prev)
-nmap <silent> g] <Plug>(coc-diagnostic-next)
-
-" GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gr <Plug>(coc-references)
-
-" Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-	if (index(['vim','help'], &filetype) >= 0)
-		execute 'h '.expand('<cword>')
-	elseif (coc#rpc#ready())
-		call CocActionAsync('doHover')
-	else
-		execute '!' . &keywordprg . " " . expand('<cword>')
-	endif
-endfunction
-
-" Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
-set updatetime=250
-
-" Symbol renaming.
-nmap gR <Plug>(coc-rename)
