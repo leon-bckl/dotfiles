@@ -4,24 +4,6 @@ set fileformat=unix
 set fileformats=unix,dos
 set encoding=utf-8
 set noswapfile
-set guioptions-=T
-set guioptions-=m
-set guioptions-=l
-set guioptions-=r
-set guioptions-=L
-set guioptions-=R
-set guioptions+=!c
-
-" Plugins will be downloaded under the specified directory.
-call plug#begin('~/.vim/plugged')
-
-" Declare the list of plugins.
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'qpkorr/vim-bufkill'
-Plug 'morhetz/gruvbox'
-
-" List ends here. Plugins become visible to Vim after this call.
-call plug#end()
 
 filetype indent plugin on   " Attempt to detect filetype/contents so that vim can autoindent etc
 syntax on                   " Enable syntax highlighting
@@ -40,8 +22,15 @@ set visualbell                   " Use visual bell instead of beeping when doing
 set ruler                        " Display cursor position
 set notimeout ttimeout ttimeoutlen=200  " Quickly time out on keycodes, but never time out on mappings
 set cindent
+set cinoptions:=:0 "Don't indent case labels
 set clipboard+=unnamed            " Share windows clipboard
 set exrc                          " Enable Project Specific .vimrc
+
+" Use tabs with all file types
+autocmd FileType * set noexpandtab
+autocmd FileType * set tabstop=4
+autocmd FileType * set softtabstop=4
+autocmd FileType * set shiftwidth=4
 
 " Make [[ and ]] work when { or } are not in the first column
 map [[ ?{<CR>w99[{:noh<CR>
@@ -59,19 +48,8 @@ inoremap <C-k> <Esc>:m .-2<CR>==gi
 vnoremap <C-j> :m '>+1<CR>gv=gv
 vnoremap <C-k> :m '<-2<CR>gv=gv
 
-" Use tabs for indentation
-set noexpandtab
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-
-set cinoptions:=:0 "Don't indent case labels
-
-"Use tabs with all file types
-autocmd FileType * set noexpandtab
-autocmd FileType * set tabstop=4
-autocmd FileType * set softtabstop=4
-autocmd FileType * set shiftwidth=4
+" Enable fuzzy file search on ctrl-p
+nnoremap <C-p> :find ./**/*/*
 
 "Remove trailing whitespace on file save
 
@@ -88,7 +66,10 @@ autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 inoremap {;<CR> {<CR>};<ESC>O
 inoremap {<CR> {<CR>}<ESC>O
 
+" gui options
 if has('gui_running')
+	set guioptions=!c
+
 	if has('macunix')
 		set guifont=Menlo:h14
 		" set macmeta " Enable ALT key
