@@ -25,6 +25,8 @@ set cindent
 set cinoptions:=:0 "Don't indent case labels
 set clipboard+=unnamed            " Share windows clipboard
 set exrc                          " Enable Project Specific .vimrc
+set foldmethod=syntax
+set foldlevel=99
 
 " Use tabs with all file types
 autocmd FileType * set noexpandtab
@@ -49,7 +51,7 @@ vnoremap <C-j> :m '>+1<CR>gv=gv
 vnoremap <C-k> :m '<-2<CR>gv=gv
 
 " Enable fuzzy file search on ctrl-p
-nnoremap <C-p> :find ./**/*/*
+nnoremap <C-p> :find ./**/*
 
 "Remove trailing whitespace on file save
 
