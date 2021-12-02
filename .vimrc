@@ -78,5 +78,11 @@ if has('gui_running')
 	elseif has('win32')
 		set guifont=Liberation\ Mono:h10
 		au GUIEnter * simalt ~x " Maximize window on startup
+
+		call system('where tee')
+
+		if !v:shell_error
+			set shellpipe=\|\ tee
+		endif
 	endif
 endif
