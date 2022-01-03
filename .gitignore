@@ -9,3 +9,6 @@
 
 #build directory
 build/
+
+#ctags
+tags
