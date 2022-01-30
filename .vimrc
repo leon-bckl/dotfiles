@@ -53,6 +53,9 @@ vnoremap <C-k> :m '<-2<CR>gv=gv
 " Enable fuzzy file search on ctrl-p
 nnoremap <C-p> :find ./**/*
 
+" Disable preview window for omni completion
+set completeopt-=preview
+
 "Remove trailing whitespace on file save
 
 function! <SID>StripTrailingWhitespaces()
