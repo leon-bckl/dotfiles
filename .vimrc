@@ -50,6 +50,10 @@ inoremap <C-k> <Esc>:m .-2<CR>==gi
 vnoremap <C-j> :m '>+1<CR>gv=gv
 vnoremap <C-k> :m '<-2<CR>gv=gv
 
+" Bind :cp and :cn to g, and g.
+nnoremap <silent> g, :cp<CR>
+nnoremap <silent> g. :cn<CR>
+
 " Enable fuzzy file search on ctrl-p
 nnoremap <C-p> :find ./**/*
 
