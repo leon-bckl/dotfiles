@@ -25,7 +25,7 @@ set cindent
 set cinoptions:=:0 "Don't indent case labels
 set clipboard+=unnamed            " Share windows clipboard
 set exrc                          " Enable Project Specific .vimrc
-set foldmethod=syntax
+set foldmethod=indent
 set foldlevel=99
 
 " Use tabs with all file types
