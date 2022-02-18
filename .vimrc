@@ -1,32 +1,31 @@
-set nocompatible              " be iMproved, required
-filetype off                  " required
+set nocompatible
+filetype off
 set fileformat=unix
 set fileformats=unix,dos
 set encoding=utf-8
 set noswapfile
-
-filetype indent plugin on   " Attempt to detect filetype/contents so that vim can autoindent etc
-syntax on                   " Enable syntax highlighting
-set hidden                  " Enable switching from an  unsaved buffer without saving it first and keep an undo history for multiple files. Warn when quitting without saving, and keep swap files.
-set wildmenu                " Better command-line completion
-set hlsearch                " Highlight searches
-" Use Ctrl+L to temporarily turn off search highlighting
+filetype indent plugin on
+syntax on
+set hidden
+set wildmenu
+set hlsearch
 nnoremap <silent> <C-l> :noh<CR>
-set ignorecase              " Use case insensitive search
-set smartcase               " Use case sensitive search if there are capital letters
-set backspace=indent,eol,start   " Allow backspacing over autoindent, line breaks and start of insert action
-set autoindent                   " When opening a new line and no filetype-specific indenting is enabled, keep the same indent as the line you're currently on(Useful for READMEs, etc)
-set laststatus=2                 " Always display the status line, even if only one window is displayed
-set confirm                      " Instead of failing a command because of unsaved changes, instead raise a  dialogue asking if you wish to save changed files
-set visualbell                   " Use visual bell instead of beeping when doing something wrong
-set ruler                        " Display cursor position
-set notimeout ttimeout ttimeoutlen=200  " Quickly time out on keycodes, but never time out on mappings
+set ignorecase
+set smartcase
+set backspace=indent,eol,start
+set autoindent
+set laststatus=2
+set confirm
+set visualbell
+set ruler
+set notimeout ttimeout ttimeoutlen=200
 set cindent
-set cinoptions:=:0 "Don't indent case labels
-set clipboard+=unnamed            " Share windows clipboard
-set exrc                          " Enable Project Specific .vimrc
+set cinoptions:=:0
+set clipboard+=unnamed
+set exrc
 set foldmethod=indent
 set foldlevel=99
+set nowrapscan
 
 " Use tabs with all file types
 autocmd FileType * set noexpandtab
