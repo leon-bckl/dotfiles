@@ -26,6 +26,7 @@ set exrc
 set foldmethod=indent
 set foldlevel=99
 set nowrapscan
+set incsearch
 
 " Use tabs with all file types
 autocmd FileType * set noexpandtab
