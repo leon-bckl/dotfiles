@@ -74,6 +74,11 @@ autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 inoremap {;<CR> {<CR>};<ESC>O
 inoremap {<CR> {<CR>}<ESC>O
 
+" grep
+if !has('win32')
+	set grepprg=grep\ -In\ $*
+endif
+
 " gui options
 if has('gui_running')
 	set guioptions=!c
