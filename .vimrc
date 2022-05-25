@@ -85,9 +85,11 @@ if has('gui_running')
 	set guioptions=!c
 
 	if has('macunix')
+		set errorformat+=%f:l:c:\ error:\ %m
 		set guifont=Menlo:h14
 		" set macmeta " Enable ALT key
 	elseif has('win32')
+		set errorformat+=%f\ :\ error\ %m
 		set guifont=Liberation\ Mono:h10
 		au GUIEnter * simalt ~x " Maximize window on startup
 	endif
