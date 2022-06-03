@@ -77,30 +77,29 @@ autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 inoremap {;<CR> {<CR>};<ESC>O
 inoremap {<CR> {<CR>}<ESC>O
 
-" grep
-if !has('win32')
-	set grepprg=grep\ -In\ $*
-endif
-
-" gui options
-if has('gui_running')
-	set guioptions=!c
-
-	if has('macunix')
-		set errorformat+=%f:l:c:\ error:\ %m
-		set guifont=Menlo:h14
-		" set macmeta " Enable ALT key
-	elseif has('win32')
-		set errorformat+=%f\ :\ error\ %m
-		set guifont=Liberation\ Mono:h10
-		au GUIEnter * simalt ~x " Maximize window on startup
-	endif
-endif
-
+" OS dependent options
 if has('win32')
+	set errorformat+=%f\ :\ error\ %m
+
 	call system('where tee')
 
 	if !v:shell_error
 		set shellpipe=\|\ tee
+	endif
+else
+	set grepprg=grep\ -In\ $*
+	set errorformat+=%f:l:c:\ error:\ %m
+endif
+
+" GUI options
+if has('gui_running')
+	set guioptions=!c
+
+	if has('macunix')
+		set guifont=Menlo:h14
+		" set macmeta " Enable ALT key
+	elseif has('win32')
+		set guifont=Liberation\ Mono:h10
+		au GUIEnter * simalt ~x " Maximize window on startup
 	endif
 endif
