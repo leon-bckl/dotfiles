@@ -60,13 +60,15 @@ nnoremap <C-p> :find ./**/*
 " Disable preview window for omni completion
 set completeopt-=preview
 
-"Remove trailing whitespace on file save
+" Remove trailing whitespace on file save
 
 function! <SID>StripTrailingWhitespaces()
-    let l = line(".")
-    let c = col(".")
-    %s/\s\+$//e
-    call cursor(l, c)
+	if &ft != "markdown"
+		let l = line(".")
+		let c = col(".")
+		%s/\s\+$//e
+		call cursor(l, c)
+	endif
 endfun
 
 autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
