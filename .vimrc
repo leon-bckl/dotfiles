@@ -29,10 +29,13 @@ set nowrapscan
 set incsearch
 
 " Use tabs with all file types
-autocmd FileType * set noexpandtab
-autocmd FileType * set tabstop=4
-autocmd FileType * set softtabstop=4
-autocmd FileType * set shiftwidth=4
+augroup indentation
+	autocmd!
+	autocmd FileType * set noexpandtab
+	autocmd FileType * set tabstop=4
+	autocmd FileType * set softtabstop=4
+	autocmd FileType * set shiftwidth=4
+augroup end
 
 " Make [[ and ]] work when { or } are not in the first column
 map [[ ?{<CR>w99[{:noh<CR>
@@ -61,7 +64,6 @@ nnoremap <C-p> :find ./**/*
 set completeopt-=preview
 
 " Remove trailing whitespace on file save
-
 function! <SID>StripTrailingWhitespaces()
 	if &ft != "markdown"
 		let l = line(".")
@@ -71,11 +73,34 @@ function! <SID>StripTrailingWhitespaces()
 	endif
 endfun
 
-autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
+augroup stripwhitespace
+	autocmd!
+	autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
+augroup end
 
 " Insert closing brace followed by semicolon when typing {;
 inoremap {;<CR> {<CR>};<ESC>O
 inoremap {<CR> {<CR>}<ESC>O
+
+" Custom syntax higlight
+augroup highlightcustom
+	autocmd!
+	" Custom types
+	autocmd Syntax c,cpp,objc syntax keyword cType b8 b32 i8 u8 i16 u16 i32 u32 i64 u64 iptr uptr isize usize f32 f64
+	autocmd Syntax c,cpp,objc syntax match cType "enum_" " Only highlight the 'enum_' prefix on sized enum typedefs
+	" Custom macros
+	autocmd Syntax c,cpp,objc syntax keyword cDefine ASSERT UNUSED
+	" Function names
+	autocmd Syntax c,cpp,objc syntax match cCustomParen "?=(" contains=cParen,cCppParen
+	autocmd Syntax c,cpp,objc syntax match cCustomFunc  "\w\+\s*(\@=" contains=cCustomParen
+	autocmd Syntax c,cpp,objc highlight def link cCustomFunc  Function
+	" Win32 types
+	autocmd Syntax c,cpp syntax keyword cType BYTE WORD DWORD BOOL SHORT USHORT INT UINT LONG ULONG LONGLONG ULONGLONG LONG_PTR ULONG_PTR DWORD_PTR SIZE_T WPARAM LPARAM LRESULT HRESULT HANDLE HINSTANCE HMODULE HWND HICON HCURSOR HBRUSH HKL HRAWINPUT HDC HGLRC LARGE_INTEGER POINT RECT GUID PROC FARPROC HANDLER_ROUTINE SYSTEM_INFO SYSTEMTIME SECURITY_ATTRIBUTES THREAD_START_ROUTINE FILETIME WIN32_FILE_ATTRIBUTE_DATA GET_FILEEX_INFO_LEVELS WIN32_FIND_DATAW OVERLAPPED MSG WNDPROC WNDCLASSEXW RAWINPUTHEADER RAWMOUSE RAWKEYBOARD RAWHID RAWINPUT RAWINPUTDEVICE PIXELFORMATDESCRIPTOR
+	" OpenGL types and macros
+	autocmd Syntax c,cpp,objc syntax match cType "GL[a-z]\+"
+	autocmd Syntax c,cpp,objc syntax match cConstant "GL_[A-Z\_]\+"
+	autocmd Syntax c,cpp,objc syntax match cConstant "WGL_[A-Z\_]\+"
+augroup end
 
 " OS dependent options
 if has('win32')
