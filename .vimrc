@@ -86,20 +86,20 @@ inoremap {<CR> {<CR>}<ESC>O
 augroup highlightcustom
 	autocmd!
 	" Custom types
-	autocmd Syntax c,cpp,objc syntax keyword cType b8 b32 i8 u8 i16 u16 i32 u32 i64 u64 iptr uptr isize usize f32 f64
-	autocmd Syntax c,cpp,objc syntax match cType "enum_" " Only highlight the 'enum_' prefix on sized enum typedefs
+	autocmd Syntax c,cpp,objc,objcpp syntax keyword cType b8 b32 i8 u8 i16 u16 i32 u32 i64 u64 iptr uptr isize usize f32 f64
+	autocmd Syntax c,cpp,objc,objcpp syntax match cType "enum_" " Only highlight the 'enum_' prefix on sized enum typedefs
 	" Custom macros
-	autocmd Syntax c,cpp,objc syntax keyword cDefine ASSERT UNUSED
+	autocmd Syntax c,cpp,objc,objcpp syntax keyword cDefine ASSERT UNUSED
 	" Function names
-	autocmd Syntax c,cpp,objc syntax match cCustomParen "?=(" contains=cParen,cCppParen
-	autocmd Syntax c,cpp,objc syntax match cCustomFunc  "\w\+\s*(\@=" contains=cCustomParen
-	autocmd Syntax c,cpp,objc highlight def link cCustomFunc  Function
+	autocmd Syntax c,cpp,objc,objcpp syntax match cCustomParen "?=(" contains=cParen,cCppParen
+	autocmd Syntax c,cpp,objc,objcpp syntax match cCustomFunc  "\w\+\s*(\@=" contains=cCustomParen
+	autocmd Syntax c,cpp,objc,objcpp highlight def link cCustomFunc Function
 	" Win32 types
 	autocmd Syntax c,cpp syntax keyword cType BYTE WORD DWORD BOOL SHORT USHORT INT UINT LONG ULONG LONGLONG ULONGLONG LONG_PTR ULONG_PTR DWORD_PTR SIZE_T WPARAM LPARAM LRESULT HRESULT HANDLE HINSTANCE HMODULE HWND HICON HCURSOR HBRUSH HKL HRAWINPUT HDC HGLRC LARGE_INTEGER POINT RECT GUID PROC FARPROC HANDLER_ROUTINE SYSTEM_INFO MEMORYSTATUSEX SYSTEMTIME SECURITY_ATTRIBUTES THREAD_START_ROUTINE FILETIME WIN32_FILE_ATTRIBUTE_DATA GET_FILEEX_INFO_LEVELS WIN32_FIND_DATAW OVERLAPPED MSG WNDPROC WNDCLASSEXW RAWINPUTHEADER RAWMOUSE RAWKEYBOARD RAWHID RAWINPUT RAWINPUTDEVICE PIXELFORMATDESCRIPTOR
 	" OpenGL types and macros
-	autocmd Syntax c,cpp,objc syntax keyword cType GLenum GLbitfield GLuint GLint GLsizei GLboolean GLbyte GLshort GLubyte GLushort GLulong GLfloat GLclampf GLdouble GLclampd GLvoid GLchar GLintptr GLsizeiptr
-	autocmd Syntax c,cpp,objc syntax match cConstant "GL_[A-Z\_]\+"
-	autocmd Syntax c,cpp,objc syntax match cConstant "WGL_[A-Z\_]\+"
+	autocmd Syntax c,cpp,objc,objcpp syntax keyword cType GLenum GLbitfield GLuint GLint GLsizei GLboolean GLbyte GLshort GLubyte GLushort GLulong GLfloat GLclampf GLdouble GLclampd GLvoid GLchar GLintptr GLsizeiptr
+	autocmd Syntax c,cpp,objc,objcpp syntax match cConstant "GL_[A-Z\_]\+"
+	autocmd Syntax c,cpp,objc,objcpp syntax match cConstant "WGL_[A-Z\_]\+"
 augroup end
 
 " OS dependent options
