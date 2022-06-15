@@ -98,8 +98,8 @@ augroup highlightcustom
 	autocmd Syntax c,cpp syntax keyword cType BYTE WORD DWORD BOOL SHORT USHORT INT UINT LONG ULONG LONGLONG ULONGLONG LONG_PTR ULONG_PTR DWORD_PTR SIZE_T WPARAM LPARAM LRESULT HRESULT HANDLE HINSTANCE HMODULE HWND HICON HCURSOR HBRUSH HKL HRAWINPUT HDC HGLRC LARGE_INTEGER POINT RECT GUID PROC FARPROC HANDLER_ROUTINE SYSTEM_INFO MEMORYSTATUSEX SYSTEMTIME SECURITY_ATTRIBUTES THREAD_START_ROUTINE FILETIME WIN32_FILE_ATTRIBUTE_DATA GET_FILEEX_INFO_LEVELS WIN32_FIND_DATAW OVERLAPPED MSG WNDPROC WNDCLASSEXW RAWINPUTHEADER RAWMOUSE RAWKEYBOARD RAWHID RAWINPUT RAWINPUTDEVICE PIXELFORMATDESCRIPTOR
 	" OpenGL types and macros
 	autocmd Syntax c,cpp,objc,objcpp syntax keyword cType GLenum GLbitfield GLuint GLint GLsizei GLboolean GLbyte GLshort GLubyte GLushort GLulong GLfloat GLclampf GLdouble GLclampd GLvoid GLchar GLintptr GLsizeiptr
-	autocmd Syntax c,cpp,objc,objcpp syntax match cConstant "GL_[A-Z\_]\+"
-	autocmd Syntax c,cpp,objc,objcpp syntax match cConstant "WGL_[A-Z\_]\+"
+	autocmd Syntax c,cpp,objc,objcpp syntax match cConstant "GL_[A-Z0-9\_]\+"
+	autocmd Syntax c,cpp,objc,objcpp syntax match cConstant "WGL_[A-Z0-9\_]\+"
 augroup end
 
 " OS dependent options
@@ -125,6 +125,6 @@ if has('gui_running')
 		" set macmeta " Enable ALT key
 	elseif has('win32')
 		set guifont=Liberation\ Mono:h10
-		au GUIEnter * simalt ~x " Maximize window on startup
+		autocmd GUIEnter * simalt ~x " Maximize window on startup
 	endif
 endif
