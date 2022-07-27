@@ -1,3 +1,4 @@
+
 set nocompatible
 filetype off
 set fileformat=unix
@@ -27,6 +28,8 @@ set foldmethod=indent
 set foldlevel=99
 set nowrapscan
 set incsearch
+set relativenumber
+set number
 
 " Use tabs with all file types
 augroup indentation
@@ -87,7 +90,7 @@ augroup highlightcustom
 	autocmd!
 	" Custom types
 	autocmd Syntax c,cpp,objc,objcpp syntax keyword cType b8 b32 i8 u8 i16 u16 i32 u32 i64 u64 iptr uptr isize usize f32 f64
-	autocmd Syntax c,cpp,objc,objcpp syntax match cType "enum_" " Only highlight the 'enum_' prefix on sized enum typedefs
+	autocmd Syntax c,cpp,objc,objcpp syntax match cType "\<enum_" " Only highlight the 'enum_' prefix on sized enum typedefs
 	" Custom macros
 	autocmd Syntax c,cpp,objc,objcpp syntax keyword cDefine ASSERT UNUSED
 	" Function names
@@ -98,8 +101,8 @@ augroup highlightcustom
 	autocmd Syntax c,cpp syntax keyword cType BYTE WORD DWORD BOOL SHORT USHORT INT UINT LONG ULONG LONGLONG ULONGLONG LONG_PTR ULONG_PTR DWORD_PTR SIZE_T WPARAM LPARAM LRESULT HRESULT HANDLE HINSTANCE HMODULE HWND HICON HCURSOR HBRUSH HKL HRAWINPUT HDC HGLRC LARGE_INTEGER POINT RECT GUID PROC FARPROC HANDLER_ROUTINE SYSTEM_INFO MEMORYSTATUSEX SYSTEMTIME SECURITY_ATTRIBUTES THREAD_START_ROUTINE FILETIME WIN32_FILE_ATTRIBUTE_DATA GET_FILEEX_INFO_LEVELS WIN32_FIND_DATAW OVERLAPPED MSG WNDPROC WNDCLASSEXW RAWINPUTHEADER RAWMOUSE RAWKEYBOARD RAWHID RAWINPUT RAWINPUTDEVICE PIXELFORMATDESCRIPTOR
 	" OpenGL types and macros
 	autocmd Syntax c,cpp,objc,objcpp syntax keyword cType GLenum GLbitfield GLuint GLint GLsizei GLboolean GLbyte GLshort GLubyte GLushort GLulong GLfloat GLclampf GLdouble GLclampd GLvoid GLchar GLintptr GLsizeiptr
-	autocmd Syntax c,cpp,objc,objcpp syntax match cConstant "GL_[A-Z0-9\_]\+"
-	autocmd Syntax c,cpp,objc,objcpp syntax match cConstant "WGL_[A-Z0-9\_]\+"
+	autocmd Syntax c,cpp,objc,objcpp syntax match cConstant "\<GL_[A-Z0-9\_]\+\>"
+	autocmd Syntax c,cpp,objc,objcpp syntax match cConstant "\<WGL_[A-Z0-9\_]\+\>"
 augroup end
 
 " OS dependent options
@@ -128,3 +131,4 @@ if has('gui_running')
 		autocmd GUIEnter * simalt ~x " Maximize window on startup
 	endif
 endif
+
