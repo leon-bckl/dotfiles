@@ -1,4 +1,3 @@
-
 set nocompatible
 filetype off
 set fileformat=unix
@@ -10,7 +9,6 @@ syntax on
 set hidden
 set wildmenu
 set hlsearch
-nnoremap <silent> <C-l> :noh<CR>
 set ignorecase
 set smartcase
 set backspace=indent,eol,start
@@ -21,7 +19,8 @@ set visualbell
 set ruler
 set notimeout ttimeout ttimeoutlen=200
 set cindent
-set cinoptions:=:0
+set cinoptions:0,l1,g0,(1,E-s,+1
+set copyindent
 set clipboard+=unnamed
 set exrc
 set foldmethod=indent
@@ -30,6 +29,9 @@ set nowrapscan
 set incsearch
 set relativenumber
 set number
+
+command W w
+nnoremap <silent> <C-l> :noh<CR>
 
 " Use tabs with all file types
 augroup indentation
