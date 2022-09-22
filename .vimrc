@@ -131,7 +131,10 @@ if has('gui_running')
 		" set macmeta " Enable ALT key
 	elseif has('win32')
 		set guifont=Liberation\ Mono:h10
-		autocmd GUIEnter * simalt ~x " Maximize window on startup
+		augroup wingui
+			autocmd!
+			autocmd GUIEnter * simalt ~x " Maximize window on startup
+		augroup end
 	endif
 endif
 
