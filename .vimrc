@@ -31,7 +31,10 @@ set relativenumber
 set number
 set splitright
 
-command W w
+command! W w
+command! -range=% FormatJson silent <line1>,<line2>!python3 -m json.tool
+
+" Clear search higlight with CTRL+L
 nnoremap <silent> <C-l> :noh<CR>
 
 " Use tabs with all file types
@@ -137,4 +140,3 @@ if has('gui_running')
 		augroup end
 	endif
 endif
-
