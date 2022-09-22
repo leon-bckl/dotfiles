@@ -29,6 +29,7 @@ set nowrapscan
 set incsearch
 set relativenumber
 set number
+set splitright
 
 command W w
 nnoremap <silent> <C-l> :noh<CR>
