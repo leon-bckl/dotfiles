@@ -27,15 +27,19 @@ set foldmethod=indent
 set foldlevel=99
 set nowrapscan
 set incsearch
-set relativenumber
-set number
 set splitright
+set completeopt-=preview
+
+" Custom shortcuts
+map <leader>h :noh<CR>
+map <leader>n :set number!<CR>
+map <leader>s :sort<CR>
+map <leader>, :cp<CR>
+map <leader>. :cn<CR>
+nnoremap <C-p> :find ./**/*
 
 command! W w
 command! -range=% FormatJson silent <line1>,<line2>!python3 -m json.tool
-
-" Clear search higlight with CTRL+L
-nnoremap <silent> <C-l> :noh<CR>
 
 " Use tabs with all file types
 augroup indentation
@@ -62,15 +66,9 @@ inoremap <C-k> <Esc>:m .-2<CR>==gi
 vnoremap <C-j> :m '>+1<CR>gv=gv
 vnoremap <C-k> :m '<-2<CR>gv=gv
 
-" Bind :cp and :cn to g, and g.
-nnoremap <silent> g, :cp<CR>
-nnoremap <silent> g. :cn<CR>
-
-" Enable fuzzy file search on ctrl-p
-nnoremap <C-p> :find ./**/*
-
-" Disable preview window for omni completion
-set completeopt-=preview
+" Insert closing brace followed by semicolon when typing {;
+inoremap {;<CR> {<CR>};<ESC>O
+inoremap {<CR> {<CR>}<ESC>O
 
 " Remove trailing whitespace on file save
 function! <SID>StripTrailingWhitespaces()
@@ -87,31 +85,7 @@ augroup stripwhitespace
 	autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 augroup end
 
-" Insert closing brace followed by semicolon when typing {;
-inoremap {;<CR> {<CR>};<ESC>O
-inoremap {<CR> {<CR>}<ESC>O
-
-" Custom syntax higlight
-augroup highlightcustom
-	autocmd!
-	" Custom types
-	autocmd Syntax c,cpp,objc,objcpp syntax keyword cType b8 b32 i8 u8 i16 u16 i32 u32 i64 u64 iptr uptr isize usize f32 f64
-	autocmd Syntax c,cpp,objc,objcpp syntax match cType "\<enum_" " Only highlight the 'enum_' prefix on sized enum typedefs
-	" Custom macros
-	autocmd Syntax c,cpp,objc,objcpp syntax keyword cDefine ASSERT UNUSED
-	" Function names
-	autocmd Syntax c,cpp,objc,objcpp syntax match cCustomParen "?=(" contains=cParen,cCppParen
-	autocmd Syntax c,cpp,objc,objcpp syntax match cCustomFunc  "\w\+\s*(\@=" contains=cCustomParen
-	autocmd Syntax c,cpp,objc,objcpp highlight def link cCustomFunc Function
-	" Win32 types
-	autocmd Syntax c,cpp syntax keyword cType BYTE WORD DWORD BOOL SHORT USHORT INT UINT LONG ULONG LONGLONG ULONGLONG LONG_PTR ULONG_PTR DWORD_PTR SIZE_T WPARAM LPARAM LRESULT HRESULT HANDLE HINSTANCE HMODULE HWND HICON HCURSOR HBRUSH HKL HRAWINPUT HDC HGLRC LARGE_INTEGER POINT RECT GUID PROC FARPROC HANDLER_ROUTINE SYSTEM_INFO MEMORYSTATUSEX SYSTEMTIME SECURITY_ATTRIBUTES THREAD_START_ROUTINE FILETIME WIN32_FILE_ATTRIBUTE_DATA GET_FILEEX_INFO_LEVELS WIN32_FIND_DATAW OVERLAPPED MSG WNDPROC WNDCLASSEXW RAWINPUTHEADER RAWMOUSE RAWKEYBOARD RAWHID RAWINPUT RAWINPUTDEVICE PIXELFORMATDESCRIPTOR
-	" OpenGL types and macros
-	autocmd Syntax c,cpp,objc,objcpp syntax keyword cType GLenum GLbitfield GLuint GLint GLsizei GLboolean GLbyte GLshort GLubyte GLushort GLulong GLfloat GLclampf GLdouble GLclampd GLvoid GLchar GLintptr GLsizeiptr
-	autocmd Syntax c,cpp,objc,objcpp syntax match cConstant "\<GL_[A-Z0-9\_]\+\>"
-	autocmd Syntax c,cpp,objc,objcpp syntax match cConstant "\<WGL_[A-Z0-9\_]\+\>"
-augroup end
-
-" OS dependent options
+" OS specific options
 if has('win32')
 	set errorformat+=%f\ :\ error\ %m
 
@@ -140,3 +114,23 @@ if has('gui_running')
 		augroup end
 	endif
 endif
+
+" Custom syntax higlight
+augroup highlightcustom
+	autocmd!
+	" Custom types
+	autocmd Syntax c,cpp,objc,objcpp syntax keyword cType b8 b32 i8 u8 i16 u16 i32 u32 i64 u64 iptr uptr isize usize f32 f64
+	autocmd Syntax c,cpp,objc,objcpp syntax match cType "\<enum_" " Only highlight the 'enum_' prefix on sized enum typedefs
+	" Custom macros
+	autocmd Syntax c,cpp,objc,objcpp syntax keyword cDefine ASSERT UNUSED
+	" Function names
+	autocmd Syntax c,cpp,objc,objcpp syntax match cCustomParen "?=(" contains=cParen,cCppParen
+	autocmd Syntax c,cpp,objc,objcpp syntax match cCustomFunc  "\w\+\s*(\@=" contains=cCustomParen
+	autocmd Syntax c,cpp,objc,objcpp highlight def link cCustomFunc Function
+	" Win32 types
+	autocmd Syntax c,cpp syntax keyword cType BYTE WORD DWORD BOOL SHORT USHORT INT UINT LONG ULONG LONGLONG ULONGLONG LONG_PTR ULONG_PTR DWORD_PTR SIZE_T WPARAM LPARAM LRESULT HRESULT HANDLE HINSTANCE HMODULE HWND HICON HCURSOR HBRUSH HKL HRAWINPUT HDC HGLRC LARGE_INTEGER POINT RECT GUID PROC FARPROC HANDLER_ROUTINE SYSTEM_INFO MEMORYSTATUSEX SYSTEMTIME SECURITY_ATTRIBUTES THREAD_START_ROUTINE FILETIME WIN32_FILE_ATTRIBUTE_DATA GET_FILEEX_INFO_LEVELS WIN32_FIND_DATAW OVERLAPPED MSG WNDPROC WNDCLASSEXW RAWINPUTHEADER RAWMOUSE RAWKEYBOARD RAWHID RAWINPUT RAWINPUTDEVICE PIXELFORMATDESCRIPTOR
+	" OpenGL types and macros
+	autocmd Syntax c,cpp,objc,objcpp syntax keyword cType GLenum GLbitfield GLuint GLint GLsizei GLboolean GLbyte GLshort GLubyte GLushort GLulong GLfloat GLclampf GLdouble GLclampd GLvoid GLchar GLintptr GLsizeiptr
+	autocmd Syntax c,cpp,objc,objcpp syntax match cConstant "\<GL_[A-Z0-9\_]\+\>"
+	autocmd Syntax c,cpp,objc,objcpp syntax match cConstant "\<WGL_[A-Z0-9\_]\+\>"
+augroup end
