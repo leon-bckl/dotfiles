@@ -19,7 +19,7 @@ set visualbell
 set ruler
 set notimeout ttimeout ttimeoutlen=200
 set cindent
-set cinoptions:0,l1,g0,(1,E-s,+1
+set cinoptions=0,l1,g0,(1,E-s,+1
 set copyindent
 set clipboard+=unnamed
 set exrc
@@ -29,6 +29,9 @@ set nowrapscan
 set incsearch
 set splitright
 set completeopt-=preview
+set display=lastline,uhex
+set formatoptions+=j
+set autoread
 
 " Custom shortcuts
 map <leader>h :noh<CR>
@@ -45,9 +48,9 @@ command! -range=% FormatJson silent <line1>,<line2>!python3 -m json.tool
 augroup indentation
 	autocmd!
 	autocmd FileType * set noexpandtab
-	autocmd FileType * set tabstop=4
-	autocmd FileType * set softtabstop=4
-	autocmd FileType * set shiftwidth=4
+	autocmd FileType * set tabstop=2
+	autocmd FileType * set softtabstop=2
+	autocmd FileType * set shiftwidth=0
 augroup end
 
 " Make [[ and ]] work when { or } are not in the first column
@@ -134,3 +137,103 @@ augroup highlightcustom
 	autocmd Syntax c,cpp,objc,objcpp syntax match cConstant "\<GL_[A-Z0-9\_]\+\>"
 	autocmd Syntax c,cpp,objc,objcpp syntax match cConstant "\<WGL_[A-Z0-9\_]\+\>"
 augroup end
+
+" Plugins
+
+let s:use_plugins=v:true
+
+if s:use_plugins
+	" Download plug.vim if it doesn't already exist (not on windows because I can't be bothered)
+	let s:plugins_need_install=v:false
+	if !has('win32') && empty(glob('~/.vim/autoload/plug.vim'))
+		let s:plugins_need_install=v:true
+		silent !echo 'Installing vim plug'
+		silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+		source ~/.vim/autoload/plug.vim
+	endif
+
+	" Set coc extensions that should be installed automatically
+	let g:coc_global_extensions = [
+		\'coc-json',
+		\'coc-clangd'
+	\]
+
+	" Setup plugins
+	call plug#begin('~/.vim/plugged')
+
+	Plug 'ctrlpvim/ctrlp.vim'
+	Plug 'morhetz/gruvbox'
+	Plug 'neoclide/coc.nvim', {'branch': 'release','do': {-> coc#util#install()}}
+	Plug 'tpope/vim-fugitive'
+	Plug 'tpope/vim-surround'
+	Plug 'tpope/vim-commentary'
+	Plug 'markonm/traces.vim'
+
+	call plug#end()
+
+	if s:plugins_need_install
+		PlugInstall
+	endif
+
+	" Include git branch in status line
+	set statusline=%f%m\ %{FugitiveStatusline()}\ %h%w%r%=%-14.(%l,%c%V%)\ %P
+
+	" ctrlpvim
+
+	let g:ctrlp_custom_ignore = {
+		\ 'dir': '\.git\|.build'
+	\ }
+	let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
+	let g:ctrlp_use_caching = 1
+	let g:ctrlp_working_path_mode = 0
+	let g:ctrlp_max_files = 25000
+
+	" Coc
+
+	" Use `g[` and `g]` to navigate diagnostics
+	" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+	nmap <silent> g[ <Plug>(coc-diagnostic-prev)
+	nmap <silent> g] <Plug>(coc-diagnostic-next)
+
+	function! s:GoToDefinition()
+		if CocHasProvider('definition') && CocAction('jumpDefinition')
+			return v:true
+		endif
+
+		let ret = execute("tag " . " " . expand('<cword>'))
+		if ret =~ "Error"
+			call searchdecl(expand('<cword>'))
+		endif
+	endfunction
+
+	nmap <silent> <C-]> :call <SID>GoToDefinition()<CR>
+	nmap <silent> gr <Plug>(coc-references)
+
+	" Use K to show documentation in preview window.
+	nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+	function! s:show_documentation()
+		if (index(['vim','help'], &filetype) >= 0)
+			execute 'h '.expand('<cword>')
+		elseif (coc#rpc#ready())
+			call CocActionAsync('doHover')
+		else
+			execute '!' . &keywordprg . " " . expand('<cword>')
+		endif
+	endfunction
+
+	augroup coc
+		" Highlight the symbol and its references when holding the cursor.
+		autocmd CursorHold * silent call CocActionAsync('highlight')
+	augroup end
+
+	" Symbol renaming.
+	nmap gR <Plug>(coc-rename)
+
+	" gruvbox
+	colorscheme gruvbox
+	set background=dark
+else
+	colorscheme desert
+endif
+
