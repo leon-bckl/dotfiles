@@ -39,7 +39,6 @@ map <leader>n :set number!<CR>
 map <leader>s :sort<CR>
 map <leader>, :cp<CR>
 map <leader>. :cn<CR>
-nnoremap <C-p> :find ./**/*
 
 command! W w
 command! -range=% FormatJson silent <line1>,<line2>!python3 -m json.tool
@@ -54,10 +53,8 @@ augroup indentation
 augroup end
 
 " Make [[ and ]] work when { or } are not in the first column
-map [[ ?{<CR>w99[{:noh<CR>
-map ][ /}<CR>b99]}:noh<CR>
-map ]] j0[[%/{<CR>:noh<CR>
-map [] k$][%?}<CR>:noh<CR>
+map <silent> [[ ?{<CR>:silent! normal! 99[{<CR>:noh<CR>
+map <silent> ]] :silent! normal! 99]}<CR>:silent! normal! $<CR>/{<CR>:noh<CR>
 
 " Move lines up and down with CTRL+J/K
 execute "set <C-j>=\ej"
@@ -142,7 +139,10 @@ augroup end
 
 let s:use_plugins=v:true
 
-if s:use_plugins
+if !s:use_plugins
+	nnoremap <C-p> :find ./**/*
+	colorscheme desert
+else
 	" Download plug.vim if it doesn't already exist (not on windows because I can't be bothered)
 	let s:plugins_need_install=v:false
 	if !has('win32') && empty(glob('~/.vim/autoload/plug.vim'))
@@ -233,7 +233,5 @@ if s:use_plugins
 	" gruvbox
 	colorscheme gruvbox
 	set background=dark
-else
-	colorscheme desert
 endif
 
