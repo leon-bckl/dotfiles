@@ -32,16 +32,7 @@ set completeopt-=preview
 set display=lastline,uhex
 set formatoptions+=j
 set autoread
-
-" Custom shortcuts
-map <leader>h :noh<CR>
-map <leader>n :set number!<CR>
-map <leader>s :sort<CR>
-map <leader>, :cp<CR>
-map <leader>. :cn<CR>
-
-command! W w
-command! -range=% FormatJson silent <line1>,<line2>!python3 -m json.tool
+set tabstop=2
 
 " Use tabs with all file types
 augroup indentation
@@ -51,6 +42,33 @@ augroup indentation
 	autocmd FileType * set softtabstop=2
 	autocmd FileType * set shiftwidth=0
 augroup end
+
+" Custom shortcuts
+map <leader>h :noh<CR>
+map <leader>n :set number!<CR>
+map <leader>, :cp<CR>
+map <leader>. :cn<CR>
+
+command! W w
+command! -range=% FormatJson silent <line1>,<line2>!python3 -m json.tool
+
+function! OpenScratchBuffer()
+	let scratch_bufnr = -1
+	for bufnr in range(1, bufnr('$'))
+		if getbufvar(bufnr, '&buftype') ==# 'nofile' && buflisted(bufnr)
+			let scratch_bufnr = bufnr
+			break
+		endif
+	endfor
+
+	if scratch_bufnr == -1
+		enew | setlocal buftype=nofile bufhidden=hide noswapfile
+	else
+		execute 'buffer' scratch_bufnr
+	endif
+endfunction
+
+command! Scratch call OpenScratchBuffer()
 
 " Make [[ and ]] work when { or } are not in the first column
 map <silent> [[ ?{<CR>:silent! normal! 99[{<CR>:noh<CR>
@@ -104,7 +122,7 @@ if has('gui_running')
 	set guioptions=!c
 
 	if has('macunix')
-		set guifont=Menlo:h14
+		set guifont=Menlo:h12
 		" set macmeta " Enable ALT key
 	elseif has('win32')
 		set guifont=Liberation\ Mono:h10
@@ -158,6 +176,9 @@ else
 		\'coc-clangd'
 	\]
 
+	let g:vimspector_install_gadgets = ['CodeLLDB']
+	let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
+
 	" Setup plugins
 	call plug#begin('~/.vim/plugged')
 
@@ -168,11 +189,20 @@ else
 	Plug 'tpope/vim-surround'
 	Plug 'tpope/vim-commentary'
 	Plug 'markonm/traces.vim'
+	Plug 'vim-scripts/a.vim'
+
+	if !has('win32')
+		Plug 'puremourning/vimspector'
+	endif
 
 	call plug#end()
 
 	if s:plugins_need_install
 		PlugInstall
+
+		if !has('win32')
+			VimspectorInstall
+		endif
 	endif
 
 	" Include git branch in status line
