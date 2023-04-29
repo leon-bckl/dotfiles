@@ -178,6 +178,8 @@ else
 
 	let g:vimspector_install_gadgets = ['CodeLLDB']
 	let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
+	let g:alternateNoDefaultAlternate = 1
+	let g:strictAlternateMatching = 1
 
 	" Setup plugins
 	call plug#begin('~/.vim/plugged')
@@ -189,7 +191,7 @@ else
 	Plug 'tpope/vim-surround'
 	Plug 'tpope/vim-commentary'
 	Plug 'markonm/traces.vim'
-	Plug 'vim-scripts/a.vim'
+	Plug 'nacitar/a.vim'
 
 	if !has('win32')
 		Plug 'puremourning/vimspector'
