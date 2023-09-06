@@ -19,7 +19,7 @@ set visualbell
 set ruler
 set notimeout ttimeout ttimeoutlen=200
 set cindent
-set cinoptions=0,l1,g0,(1,E-s,+1
+set cinoptions=:0,l1,g0,(1,E-s,+1
 set copyindent
 set clipboard+=unnamed
 set exrc
