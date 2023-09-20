@@ -33,6 +33,8 @@ set display=lastline,uhex
 set formatoptions+=j
 set autoread
 set tabstop=2
+set number
+set relativenumber
 
 " Use tabs with all file types
 augroup indentation
@@ -44,10 +46,17 @@ augroup indentation
 augroup end
 
 " Custom shortcuts
-map <leader>h :noh<CR>
-map <leader>n :set number!<CR>
-map <leader>, :cp<CR>
-map <leader>. :cn<CR>
+let mapleader = " "
+nnoremap <leader>h :noh<CR>
+nnoremap <leader>n :set number!<CR>
+nnoremap <leader>N :set relativenumber!<CR>
+nnoremap <leader>, :cp<CR>
+nnoremap <leader>. :cn<CR>
+xnoremap <leader>p "_dP
+noremap <C-d> <C-d>zz
+noremap <C-u> <C-u>zz
+noremap <C-f> <C-f>M
+noremap <C-b> <C-b>M
 
 command! W w
 command! -range=% FormatJson silent <line1>,<line2>!python3 -m json.tool
