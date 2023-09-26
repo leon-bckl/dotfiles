@@ -46,7 +46,7 @@ augroup indentation
 augroup end
 
 " Custom shortcuts
-let mapleader = " "
+map <space> <leader>
 nnoremap <leader>h :noh<CR>
 nnoremap <leader>n :set number!<CR>
 nnoremap <leader>N :set relativenumber!<CR>
