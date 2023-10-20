@@ -19,7 +19,7 @@ set visualbell
 set ruler
 set notimeout ttimeout ttimeoutlen=200
 set cindent
-set cinoptions=:0,l1,g0,(1,E-s,+1
+set cinoptions=:0,l1,g0,(1,E-s,+1,N-s
 set copyindent
 set clipboard+=unnamed
 set exrc
@@ -47,6 +47,7 @@ augroup end
 
 " Custom shortcuts
 map <space> <leader>
+nnoremap <leader>m :silent! make! \| cwindow<CR>
 nnoremap <leader>h :noh<CR>
 nnoremap <leader>n :set number!<CR>
 nnoremap <leader>N :set relativenumber!<CR>
@@ -57,6 +58,8 @@ noremap <C-d> <C-d>zz
 noremap <C-u> <C-u>zz
 noremap <C-f> <C-f>M
 noremap <C-b> <C-b>M
+nnoremap n nzz
+nnoremap N Nzz
 
 command! W w
 command! -range=% FormatJson silent <line1>,<line2>!python3 -m json.tool
