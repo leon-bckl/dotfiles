@@ -35,6 +35,7 @@ set autoread
 set tabstop=2
 set number
 set relativenumber
+set path=.,**
 
 " Use tabs with all file types
 augroup indentation
@@ -47,7 +48,7 @@ augroup end
 
 " Custom shortcuts
 map <space> <leader>
-nnoremap <leader>m :silent! make! \| cwindow<CR>
+nnoremap <leader>m :wa \| silent! make! \| cwindow<CR>
 nnoremap <leader>h :noh<CR>
 nnoremap <leader>n :set number!<CR>
 nnoremap <leader>N :set relativenumber!<CR>
