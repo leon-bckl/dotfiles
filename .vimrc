@@ -83,10 +83,6 @@ endfunction
 
 command! Scratch call OpenScratchBuffer()
 
-" Make [[ and ]] work when { or } are not in the first column
-map <silent> [[ ?{<CR>:silent! normal! 99[{<CR>:noh<CR>
-map <silent> ]] :silent! normal! 99]}<CR>:silent! normal! $<CR>/{<CR>:noh<CR>
-
 " Move lines up and down with CTRL+J/K
 execute "set <C-j>=\ej"
 execute "set <C-k>=\ek"
