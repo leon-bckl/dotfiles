@@ -49,6 +49,8 @@ augroup end
 " Custom shortcuts
 map <space> <leader>
 nnoremap <leader>m :wa \| silent! make! \| cwindow<CR>
+nnoremap <leader>o :copen<CR>
+nnoremap <leader>c :cclose<CR>
 nnoremap <leader>h :noh<CR>
 nnoremap <leader>n :set number!<CR>
 nnoremap <leader>N :set relativenumber!<CR>
@@ -82,6 +84,51 @@ function! OpenScratchBuffer()
 endfunction
 
 command! Scratch call OpenScratchBuffer()
+
+" Open netrw as a project tree on the left
+
+let g:netrw_banner=0
+let g:netrw_liststyle=3
+let g:netrw_browse_split=4
+let g:netrw_altv=1
+let g:netrw_winsize=-28
+let g:netrw_sort_sequence = '[\/]$,*'
+
+function! ToggleNetrw()
+	" Search for an existing netrw buffer
+	let l:bufexist = 0
+	for l:buf in range(1, bufnr('$'))
+		if bufexists(l:buf) && getbufvar(l:buf, '&filetype') == 'netrw'
+			let l:bufexist = l:buf
+			break
+		endif
+	endfor
+
+	if l:bufexist
+		" Find the window where the netrw buffer is open
+		let l:winexist = 0
+		for l:win in range(1, winnr('$'))
+			if getwinvar(l:win, '&filetype') == 'netrw'
+				let l:winexist = l:win
+				break
+			endif
+		endfor
+
+		" Switch to the window with the netrw buffer
+		if l:winexist
+			exe l:winexist . 'wincmd w'
+		else
+			" Open in a vertical split if netrw buffer is not already open
+			Lexplore .
+		endif
+	else
+		" Open netrw in a vertical split if no netrw buffer exists
+		Lexplore .
+	endif
+endfunction
+
+nnoremap <silent> <leader>e :call ToggleNetrw()<CR>
+nnoremap <silent> <leader>f :Lexplore %:p:h<CR>
 
 " Move lines up and down with CTRL+J/K
 execute "set <C-j>=\ej"
