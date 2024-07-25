@@ -248,6 +248,7 @@ else
 	Plug 'tpope/vim-commentary'
 	Plug 'markonm/traces.vim'
 	Plug 'nacitar/a.vim'
+	Plug 'Raimondi/delimitMate'
 
 	if !has('win32')
 		Plug 'puremourning/vimspector'
@@ -297,6 +298,10 @@ else
 	nmap <silent> <C-]> :call <SID>GoToDefinition()<CR>
 	nmap <silent> gr <Plug>(coc-references)
 
+	" Trigger autocomplete with ctrl-space
+	inoremap <silent><expr> <C-space> coc#refresh()
+	" Trigger signature help with ctrl-tab
+	inoremap <silent> <C-tab> <C-r>=CocActionAsync('showSignatureHelp')<CR>
 	" Use K to show documentation in preview window.
 	nnoremap <silent> K :call <SID>show_documentation()<CR>
 
