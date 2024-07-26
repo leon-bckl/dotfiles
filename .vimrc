@@ -46,7 +46,7 @@ augroup indentation
 	autocmd FileType * set shiftwidth=0
 augroup end
 
-" Custom shortcuts
+" Custom mappings
 map <space> <leader>
 nnoremap <leader>m :wa \| silent! make! \| cwindow<CR>
 nnoremap <leader>o :copen<CR>
@@ -67,68 +67,37 @@ nnoremap N Nzz
 command! W w
 command! -range=% FormatJson silent <line1>,<line2>!python3 -m json.tool
 
-function! OpenScratchBuffer()
-	let scratch_bufnr = -1
-	for bufnr in range(1, bufnr('$'))
-		if getbufvar(bufnr, '&buftype') ==# 'nofile' && buflisted(bufnr)
-			let scratch_bufnr = bufnr
-			break
+" Open a new scratch buffer that cannot be saved or use the existing one
+function! s:OpenScratchBuffer()
+	let buf = bufnr('scratch')
+	if buf != -1
+		execute 'buffer' . buf
+	else
+		enew
+		setlocal buftype=nofile
+		setlocal bufhidden=hide
+		setlocal noswapfile
+		file scratch
+	endif
+endfunction
+command! Scratch call <SID>OpenScratchBuffer()
+
+" Remove all lines from quickfix that do not point to a file location
+function! s:CleanQuickFixList()
+	let list = getqflist()
+	let newlist = []
+
+	for item in list
+		if item['valid']
+			call add(newlist, item)
 		endif
 	endfor
 
-	if scratch_bufnr == -1
-		enew | setlocal buftype=nofile bufhidden=hide noswapfile
-	else
-		execute 'buffer' scratch_bufnr
+	if !empty(newlist)
+		call setqflist(newlist)
 	endif
 endfunction
-
-command! Scratch call OpenScratchBuffer()
-
-" Open netrw as a project tree on the left
-
-let g:netrw_banner=0
-let g:netrw_liststyle=3
-let g:netrw_browse_split=4
-let g:netrw_altv=1
-let g:netrw_winsize=-28
-let g:netrw_sort_sequence = '[\/]$,*'
-
-function! ToggleNetrw()
-	" Search for an existing netrw buffer
-	let l:bufexist = 0
-	for l:buf in range(1, bufnr('$'))
-		if bufexists(l:buf) && getbufvar(l:buf, '&filetype') == 'netrw'
-			let l:bufexist = l:buf
-			break
-		endif
-	endfor
-
-	if l:bufexist
-		" Find the window where the netrw buffer is open
-		let l:winexist = 0
-		for l:win in range(1, winnr('$'))
-			if getwinvar(l:win, '&filetype') == 'netrw'
-				let l:winexist = l:win
-				break
-			endif
-		endfor
-
-		" Switch to the window with the netrw buffer
-		if l:winexist
-			exe l:winexist . 'wincmd w'
-		else
-			" Open in a vertical split if netrw buffer is not already open
-			Lexplore .
-		endif
-	else
-		" Open netrw in a vertical split if no netrw buffer exists
-		Lexplore .
-	endif
-endfunction
-
-nnoremap <silent> <leader>e :call ToggleNetrw()<CR>
-nnoremap <silent> <leader>f :Lexplore %:p:h<CR>
+nnoremap <leader>q :call <SID>CleanQuickFixList()<CR>
 
 " Move lines up and down with CTRL+J/K
 execute "set <C-j>=\ej"
@@ -145,7 +114,7 @@ inoremap {;<CR> {<CR>};<ESC>O
 inoremap {<CR> {<CR>}<ESC>O
 
 " Remove trailing whitespace on file save
-function! <SID>StripTrailingWhitespaces()
+function! s:StripTrailingWhitespaces()
 	if &ft != "markdown"
 		let l = line(".")
 		let c = col(".")
@@ -159,13 +128,31 @@ augroup stripwhitespace
 	autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 augroup end
 
+" Search with ag
+if executable('ag')
+	" Define a custom command `Ag` to execute `ag` without changing `grepprg`
+	command! -nargs=+ Ag call <SID>SearchWithAg(<q-args>)
+
+	" Function to execute `ag` and populate the quickfix list
+	function! s:SearchWithAg(...) abort
+		" Join the command line arguments passed to `Ag`
+		let l:args = join(a:000, ' ')
+		" Run `ag --vimgrep` and capture the output in the quickfix list
+		execute 'cgetexpr system("ag --vimgrep " . l:args)'
+		" Open the quickfix window if there are results
+		if len(getqflist()) > 0
+			copen
+		else
+			echo 'No results found for ' . l:args
+		endif
+	endfunction
+endif
+
 " OS specific options
 if has('win32')
 	set errorformat+=%f\ :\ error\ %m
 
-	call system('where tee')
-
-	if !v:shell_error
+	if executable('tee')
 		set shellpipe=\|\ tee
 	endif
 else
@@ -236,11 +223,34 @@ else
 	let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
 	let g:alternateNoDefaultAlternate = 1
 	let g:strictAlternateMatching = 1
+	let g:NERDTreeWinSize=32
+	let g:NERDTreeMinimalUI=1
+	let g:NERDTreeMapHelp='F1>'
+
+  let g:vim_ai_chat = {
+  \  "options": {
+  \    "model": "gpt-4o",
+  \    "max_tokens": 1000,
+  \    "endpoint_url": "https://api.openai.com/v1/chat/completions",
+  \    "temperature": 1,
+  \    "request_timeout": 20,
+  \    "enable_auth": 1,
+  \    "selection_boundary": "#####",
+  \  },
+  \  "ui": {
+  \    "code_syntax_enabled": 1,
+  \    "populate_options": 0,
+  \    "open_chat_command": "preset_below",
+  \    "scratch_buffer_keep_open": 0,
+  \    "paste_mode": 1,
+  \  },
+  \}
 
 	" Setup plugins
 	call plug#begin('~/.vim/plugged')
 
-	Plug 'ctrlpvim/ctrlp.vim'
+	Plug 'junegunn/fzf', {'do': {-> fzf#install()}}
+	Plug 'junegunn/fzf.vim'
 	Plug 'morhetz/gruvbox'
 	Plug 'neoclide/coc.nvim', {'branch': 'release','do': {-> coc#util#install()}}
 	Plug 'tpope/vim-fugitive'
@@ -249,6 +259,8 @@ else
 	Plug 'markonm/traces.vim'
 	Plug 'nacitar/a.vim'
 	Plug 'Raimondi/delimitMate'
+	Plug 'madox2/vim-ai'
+	Plug 'preservim/NERDTree'
 
 	if !has('win32')
 		Plug 'puremourning/vimspector'
@@ -267,25 +279,28 @@ else
 	" Include git branch in status line
 	set statusline=%f%m\ %{FugitiveStatusline()}\ %h%w%r%=%-14.(%l,%c%V%)\ %P
 
-	" ctrlpvim
+	" fzf
 
-	let g:ctrlp_custom_ignore = {
-		\ 'dir': '\.git\|.build'
-	\ }
-	let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
-	let g:ctrlp_use_caching = 1
-	let g:ctrlp_working_path_mode = 0
-	let g:ctrlp_max_files = 25000
+	nnoremap <silent><expr> <C-p> (len(system('git rev-parse')) ? ':Files' : ':GFiles') . "\<CR>"
+	nnoremap <silent> <leader>b :Buffers<CR>
 
 	" Coc
 
-	" Use `g[` and `g]` to navigate diagnostics
-	" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-	nmap <silent> g[ <Plug>(coc-diagnostic-prev)
-	nmap <silent> g] <Plug>(coc-diagnostic-next)
+	nnoremap <leader>[ <Plug>(coc-diagnostic-prev)
+	nnoremap <leader>] <Plug>(coc-diagnostic-next)
+	nnoremap <silent> <C-[> :call <SID>GoToDefinition('declaration', 'jumpDeclaration')<CR>
+	nnoremap <silent> <C-]> :call <SID>GoToDefinition('definition', 'jumpDefinition')<CR>
+	nnoremap <leader>r <Plug>(coc-references)
+	nnoremap <leader>R <Plug>(coc-rename)
+	nnoremap <leader>a <Plug>(coc-fix-current)
+	nnoremap <leader>x <Plug>(coc-refactor)
+	nnoremap <leader>u <Plug>(coc-format)
+	inoremap <silent><expr> <C-space> coc#refresh()
+	inoremap <silent> <C-tab> <C-r>=CocActionAsync('showSignatureHelp')<CR>
+	nnoremap <silent> K :call <SID>ShowDocumentation()<CR>
 
-	function! s:GoToDefinition()
-		if CocHasProvider('definition') && CocAction('jumpDefinition')
+	function! s:GoToDefinition(cocProvider, cocAction)
+		if CocHasProvider(a:cocProvider) && CocAction(a:cocAction)
 			return v:true
 		endif
 
@@ -295,17 +310,7 @@ else
 		endif
 	endfunction
 
-	nmap <silent> <C-]> :call <SID>GoToDefinition()<CR>
-	nmap <silent> gr <Plug>(coc-references)
-
-	" Trigger autocomplete with ctrl-space
-	inoremap <silent><expr> <C-space> coc#refresh()
-	" Trigger signature help with ctrl-tab
-	inoremap <silent> <C-tab> <C-r>=CocActionAsync('showSignatureHelp')<CR>
-	" Use K to show documentation in preview window.
-	nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-	function! s:show_documentation()
+	function! s:ShowDocumentation()
 		if (index(['vim','help'], &filetype) >= 0)
 			execute 'h '.expand('<cword>')
 		elseif (coc#rpc#ready())
@@ -318,13 +323,14 @@ else
 	augroup coc
 		" Highlight the symbol and its references when holding the cursor.
 		autocmd CursorHold * silent call CocActionAsync('highlight')
+		autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 	augroup end
 
-	" Symbol renaming.
-	nmap gR <Plug>(coc-rename)
+	" NERDTree
+	nnoremap <silent> <leader>f :NERDTreeFind<CR>
+	nnoremap <silent> <leader>t :NERDTreeFocus<CR>
 
 	" gruvbox
 	colorscheme gruvbox
 	set background=dark
 endif
-
