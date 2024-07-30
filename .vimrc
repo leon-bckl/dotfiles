@@ -128,26 +128,6 @@ augroup stripwhitespace
 	autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 augroup end
 
-" Search with ag
-if executable('ag')
-	" Define a custom command `Ag` to execute `ag` without changing `grepprg`
-	command! -nargs=+ Ag call <SID>SearchWithAg(<q-args>)
-
-	" Function to execute `ag` and populate the quickfix list
-	function! s:SearchWithAg(...) abort
-		" Join the command line arguments passed to `Ag`
-		let l:args = join(a:000, ' ')
-		" Run `ag --vimgrep` and capture the output in the quickfix list
-		execute 'cgetexpr system("ag --vimgrep " . l:args)'
-		" Open the quickfix window if there are results
-		if len(getqflist()) > 0
-			copen
-		else
-			echo 'No results found for ' . l:args
-		endif
-	endfunction
-endif
-
 " OS specific options
 if has('win32')
 	set errorformat+=%f\ :\ error\ %m
@@ -281,8 +261,22 @@ else
 
 	" fzf
 
-	nnoremap <silent><expr> <C-p> (len(system('git rev-parse')) ? ':Files' : ':GFiles') . "\<CR>"
+	let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
+
+	nnoremap <silent><expr> <C-p> (len(system('git rev-parse')) ? ':Files' : ':GFiles --recurse-submodules') . "\<CR>"
 	nnoremap <silent> <leader>b :Buffers<CR>
+
+	" Search with ag
+	if executable('ag')
+		function! s:AgWithOptions(arg, bang)
+			let tokens  = split(a:arg)
+			let ag_opts = join(filter(copy(tokens), 'v:val =~ "^-"'))
+			let query   = join(filter(copy(tokens), 'v:val !~ "^-"'))
+			call fzf#vim#ag(query, '--smart-case ' . ag_opts, fzf#vim#with_preview(), a:bang)
+		endfunction
+
+		command! -nargs=* -bang Ag call s:AgWithOptions(<q-args>, <bang>0)
+	endif
 
 	" Coc
 
