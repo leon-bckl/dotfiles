@@ -135,7 +135,7 @@ augroup end
 
 " OS specific options
 if has('win32')
-	set errorformat+=%f\ :\ error\ %m,\ %#%f(%l\\\,%c):\ %m
+	set errorformat^=\ %#%f(%l\\\,%c):\ %m,%f\ :\ error\ %m
 
 	if executable('tee')
 		set shellpipe=\|\ tee
