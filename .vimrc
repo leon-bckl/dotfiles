@@ -49,14 +49,19 @@ augroup end
 " Custom mappings
 map <space> <leader>
 nnoremap <leader>m :wa \| silent! make! \| cwindow<CR>
-nnoremap <leader>o :copen<CR>
-nnoremap <leader>c :cclose<CR>
-nnoremap <leader>h :noh<CR>
-nnoremap <leader>n :set number!<CR>
-nnoremap <leader>N :set relativenumber!<CR>
-nnoremap <leader>, :cp<CR>
-nnoremap <leader>. :cn<CR>
-xnoremap <leader>p "_dP
+nnoremap <silent> <leader>e :Explore<CR>
+let g:netrw_banner=0
+let g:netrw_winsize=-32
+nnoremap <silent> <leader>f :Lexplore %:h<CR>
+nnoremap <silent> <leader>t :Lexplore<CR>
+nnoremap <silent> <leader>o :copen<CR>
+nnoremap <silent> <leader>c :cclose<CR>
+nnoremap <silent> <leader>h :noh<CR>
+nnoremap <silent> <leader>n :set number!<CR>
+nnoremap <silent> <leader>N :set relativenumber!<CR>
+nnoremap <silent> <leader>, :cp<CR>
+nnoremap <silent> <leader>. :cn<CR>
+xnoremap <silent> <leader>p "_dP
 noremap <C-d> <C-d>zz
 noremap <C-u> <C-u>zz
 noremap <C-f> <C-f>M
@@ -203,9 +208,6 @@ else
 	let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
 	let g:alternateNoDefaultAlternate = 1
 	let g:strictAlternateMatching = 1
-	let g:NERDTreeWinSize=32
-	let g:NERDTreeMinimalUI=1
-	let g:NERDTreeMapHelp='F1>'
 
   let g:vim_ai_chat = {
   \  "options": {
@@ -240,7 +242,6 @@ else
 	Plug 'nacitar/a.vim'
 	Plug 'Raimondi/delimitMate'
 	Plug 'madox2/vim-ai'
-	Plug 'preservim/NERDTree'
 
 	if !has('win32')
 		Plug 'puremourning/vimspector'
@@ -286,7 +287,11 @@ else
 	nnoremap <silent> <C-]> :call <SID>GoToDefinition('definition', 'jumpDefinition')<CR>
 	nnoremap <leader>r <Plug>(coc-references)
 	nnoremap <leader>R <Plug>(coc-rename)
-	nnoremap <leader>a <Plug>(coc-fix-current)
+	nnoremap <leader>qf <Plug>(coc-fix-current)
+	nnoremap <leader>g <Plug>(coc-codeaction-refactor)
+	xnoremap <leader>g <Plug>(coc-codeaction-refactor-selected)
+	nnoremap <leader>a <Plug>(coc-codeaction-line)
+	xnoremap <leader>a <Plug>(coc-codeaction-selected)
 	nnoremap <leader>x <Plug>(coc-refactor)
 	nnoremap <leader>u <Plug>(coc-format)
 	inoremap <silent><expr> <C-space> coc#refresh()
@@ -319,10 +324,6 @@ else
 		autocmd CursorHold * silent call CocActionAsync('highlight')
 		autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 	augroup end
-
-	" NERDTree
-	nnoremap <silent> <leader>f :NERDTreeFind<CR>
-	nnoremap <silent> <leader>t :NERDTreeFocus<CR>
 
 	" gruvbox
 	colorscheme gruvbox
