@@ -133,9 +133,30 @@ augroup stripwhitespace
 	autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 augroup end
 
+" Find in files with Ag
+if executable('ag')
+	command! -nargs=+ AgFind call <SID>SearchWithAg(<q-args>)
+	nnoremap <leader>F :AgFind<Space>
+	set errorformat+=%f:%l:%c:%m
+
+	function! s:SearchWithAg(...) abort
+		let l:args = join(a:000, ' ')
+		execute 'cgetexpr system("ag --vimgrep " . l:args)'
+		if len(getqflist()) > 0
+			copen
+		else
+			echohl WarningMsg
+			echomsg 'No results for ' . l:args
+			echohl None
+		endif
+	endfunction
+else
+	nnoremap <leader>F :grep<Space>
+endif
+
 " OS specific options
 if has('win32')
-	set errorformat^=\ %#%f(%l\\\,%c):\ %m,%f\ :\ error\ %m
+	set errorformat+=\ %#%f(%l\\\,%c):\ %m,%f\ :\ error\ %m
 
 	if executable('tee')
 		set shellpipe=\|\ tee
@@ -264,16 +285,17 @@ else
 
 	let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
 
+	" Make GFiles use the cwd so it still works for the entire repository when the current buffer is a file in a submodule or an external file
+	command! -bang -nargs=? GFiles call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(<q-args> == "?" ? {"placeholder":"","dir":getcwd()} : {"dir":getcwd()}), <bang>0)
 	nnoremap <silent><expr> <C-p> (len(system('git rev-parse')) ? ':Files' : ':GFiles --recurse-submodules') . "\<CR>"
-	nnoremap <silent> <leader>b :Buffers<CR>
 
-	" Search with ag
+	" ALlow passing options to Ag
 	if executable('ag')
 		function! s:AgWithOptions(arg, bang)
 			let tokens  = split(a:arg)
 			let ag_opts = join(filter(copy(tokens), 'v:val =~ "^-"'))
 			let query   = join(filter(copy(tokens), 'v:val !~ "^-"'))
-			call fzf#vim#ag(query, '--smart-case ' . ag_opts, fzf#vim#with_preview(), a:bang)
+			call fzf#vim#ag(query, ag_opts, fzf#vim#with_preview(), a:bang)
 		endfunction
 
 		command! -nargs=* -bang Ag call s:AgWithOptions(<q-args>, <bang>0)
