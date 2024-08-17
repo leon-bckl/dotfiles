@@ -79,11 +79,12 @@ function! s:OpenScratchBuffer()
 		execute 'buffer' . buf
 	else
 		enew
-		setlocal buftype=nofile
-		setlocal bufhidden=hide
-		setlocal noswapfile
 		file scratch
 	endif
+
+	setlocal buftype=nofile
+	setlocal bufhidden=hide
+	setlocal noswapfile
 endfunction
 command! Scratch call <SID>OpenScratchBuffer()
 
