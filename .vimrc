@@ -231,25 +231,6 @@ else
 	let g:alternateNoDefaultAlternate = 1
 	let g:strictAlternateMatching = 1
 
-  let g:vim_ai_chat = {
-  \  "options": {
-  \    "model": "gpt-4o",
-  \    "max_tokens": 1000,
-  \    "endpoint_url": "https://api.openai.com/v1/chat/completions",
-  \    "temperature": 1,
-  \    "request_timeout": 20,
-  \    "enable_auth": 1,
-  \    "selection_boundary": "#####",
-  \  },
-  \  "ui": {
-  \    "code_syntax_enabled": 1,
-  \    "populate_options": 0,
-  \    "open_chat_command": "preset_below",
-  \    "scratch_buffer_keep_open": 0,
-  \    "paste_mode": 1,
-  \  },
-  \}
-
 	" Setup plugins
 	call plug#begin('~/.vim/plugged')
 
@@ -263,7 +244,6 @@ else
 	Plug 'markonm/traces.vim'
 	Plug 'nacitar/a.vim'
 	Plug 'Raimondi/delimitMate'
-	Plug 'madox2/vim-ai'
 
 	if !has('win32')
 		Plug 'puremourning/vimspector'
