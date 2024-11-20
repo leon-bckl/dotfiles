@@ -307,7 +307,7 @@ else
 			let rg_opts = join(filter(copy(tokens), 'v:val =~ "^-"'))
 			let query   = join(filter(copy(tokens), 'v:val !~ "^-"'))
 			let rg_cmd  = 'rg --column --line-number --no-heading --color=always --smart-case '
-			call fzf#vim#grep(rg_cmd . rg_opts . ' -- ' . "'" . query . "'", fzf#vim#with_preview(), a:bang)
+			call fzf#vim#grep(rg_cmd . rg_opts . ' -- ' . '"' . query . '"', fzf#vim#with_preview(), a:bang)
 		endfunction
 
 		command! -nargs=* -bang Rg call s:RgWithOptions(<q-args>, <bang>0)
