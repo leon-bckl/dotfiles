@@ -37,14 +37,10 @@ set number
 set relativenumber
 set path=.,**
 
-" Use tabs with all file types
-augroup indentation
-	autocmd!
-	autocmd FileType * set noexpandtab
-	autocmd FileType * set tabstop=2
-	autocmd FileType * set softtabstop=2
-	autocmd FileType * set shiftwidth=0
-augroup end
+set noexpandtab
+set tabstop=2
+set softtabstop=0
+set shiftwidth=0
 
 " Custom mappings
 map <space> <leader>
@@ -69,6 +65,7 @@ noremap <C-b> <C-b>M
 nnoremap n nzz
 nnoremap N Nzz
 
+command! BD :bp \| sp \| bn \| bd
 command! W w
 command! -range=% FormatJson silent <line1>,<line2>!python3 -m json.tool
 
@@ -134,7 +131,7 @@ augroup stripwhitespace
 	autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 augroup end
 
-" Find in files with Ag
+" Find in files with AgFind
 if executable('ag')
 	command! -nargs=+ AgFind call <SID>SearchWithAg(<q-args>)
 	nnoremap <leader>F :AgFind<Space>
@@ -143,6 +140,24 @@ if executable('ag')
 	function! s:SearchWithAg(...) abort
 		let l:args = join(a:000, ' ')
 		execute 'cgetexpr system("ag --vimgrep " . l:args)'
+		if len(getqflist()) > 0
+			copen
+		else
+			echohl WarningMsg
+			echomsg 'No results for ' . l:args
+			echohl None
+		endif
+	endfunction
+endif
+
+" Find in files with RgFind
+if executable('rg')
+	command! -nargs=+ RgFind call <SID>SearchWithRg(<q-args>)
+	nnoremap <leader>F :RgFind<Space>
+
+	function! s:SearchWithRg(...) abort
+		let l:args = join(a:000, ' ')
+		execute 'cgetexpr system("rg --vimgrep " . l:args)'
 		if len(getqflist()) > 0
 			copen
 		else
@@ -172,7 +187,7 @@ if has('gui_running')
 	set guioptions=!c
 
 	if has('macunix')
-		set guifont=Menlo:h12
+		set guifont=Menlo:h14
 		" set macmeta " Enable ALT key
 	elseif has('win32')
 		set guifont=Liberation\ Mono:h10
@@ -187,13 +202,13 @@ endif
 augroup highlightcustom
 	autocmd!
 	" Custom types
+	autocmd Syntax c,cpp,objc,objcpp syntax match cType "\<\w\+_t\>"
 	autocmd Syntax c,cpp,objc,objcpp syntax keyword cType b8 b32 i8 u8 i16 u16 i32 u32 i64 u64 iptr uptr isize usize f32 f64
 	autocmd Syntax c,cpp,objc,objcpp syntax match cType "\<enum_" " Only highlight the 'enum_' prefix on sized enum typedefs
 	" Custom macros
 	autocmd Syntax c,cpp,objc,objcpp syntax keyword cDefine ASSERT UNUSED
 	" Function names
-	autocmd Syntax c,cpp,objc,objcpp syntax match cCustomParen "?=(" contains=cParen,cCppParen
-	autocmd Syntax c,cpp,objc,objcpp syntax match cCustomFunc  "\w\+\s*(\@=" contains=cCustomParen
+	autocmd Syntax c,cpp,objc,objcpp syntax match cCustomFunc "\w\+\s*(\@="
 	autocmd Syntax c,cpp,objc,objcpp highlight def link cCustomFunc Function
 	" Win32 types
 	autocmd Syntax c,cpp syntax keyword cType BYTE WORD DWORD BOOL SHORT USHORT INT UINT LONG ULONG LONGLONG ULONGLONG LONG_PTR ULONG_PTR DWORD_PTR SIZE_T WPARAM LPARAM LRESULT HRESULT HANDLE HINSTANCE HMODULE HWND HICON HCURSOR HBRUSH HKL HRAWINPUT HDC HGLRC LARGE_INTEGER POINT RECT GUID PROC FARPROC HANDLER_ROUTINE SYSTEM_INFO MEMORYSTATUSEX SYSTEMTIME SECURITY_ATTRIBUTES THREAD_START_ROUTINE FILETIME WIN32_FILE_ATTRIBUTE_DATA GET_FILEEX_INFO_LEVELS WIN32_FIND_DATAW OVERLAPPED MSG WNDPROC WNDCLASSEXW RAWINPUTHEADER RAWMOUSE RAWKEYBOARD RAWHID RAWINPUT RAWINPUTDEVICE PIXELFORMATDESCRIPTOR
@@ -244,6 +259,7 @@ else
 	Plug 'markonm/traces.vim'
 	Plug 'nacitar/a.vim'
 	Plug 'Raimondi/delimitMate'
+	Plug 'lifepillar/vim-solarized8'
 
 	if !has('win32')
 		Plug 'puremourning/vimspector'
@@ -266,6 +282,8 @@ else
 
 	let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
 
+	nnoremap <leader>b :Buffers<CR>
+	nnoremap <leader>l :BLines<CR>
 	" Make GFiles use the cwd so it still works for the entire repository when the current buffer is a file in a submodule or an external file
 	command! -bang -nargs=? GFiles call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(<q-args> == "?" ? {"placeholder":"","dir":getcwd()} : {"dir":getcwd()}), <bang>0)
 	nnoremap <silent><expr> <C-p> (len(system('git rev-parse')) ? ':Files' : ':GFiles --recurse-submodules') . "\<CR>"
@@ -282,11 +300,24 @@ else
 		command! -nargs=* -bang Ag call s:AgWithOptions(<q-args>, <bang>0)
 	endif
 
+	" ALlow passing options to Rg
+	if executable('rg')
+		function! s:RgWithOptions(arg, bang)
+			let tokens  = split(a:arg)
+			let rg_opts = join(filter(copy(tokens), 'v:val =~ "^-"'))
+			let query   = join(filter(copy(tokens), 'v:val !~ "^-"'))
+			let rg_cmd  = 'rg --column --line-number --no-heading --color=always --smart-case '
+			call fzf#vim#grep(rg_cmd . rg_opts . ' -- ' . "'" . query . "'", fzf#vim#with_preview(), a:bang)
+		endfunction
+
+		command! -nargs=* -bang Rg call s:RgWithOptions(<q-args>, <bang>0)
+	endif
+
 	" Coc
 
 	nnoremap <leader>[ <Plug>(coc-diagnostic-prev)
 	nnoremap <leader>] <Plug>(coc-diagnostic-next)
-	nnoremap <silent> <C-[> :call <SID>GoToDefinition('declaration', 'jumpDeclaration')<CR>
+	" nnoremap <silent> gd :call <SID>GoToDefinition('declaration', 'jumpDeclaration')<CR>
 	nnoremap <silent> <C-]> :call <SID>GoToDefinition('definition', 'jumpDefinition')<CR>
 	nnoremap <leader>r <Plug>(coc-references)
 	nnoremap <leader>R <Plug>(coc-rename)
@@ -329,6 +360,7 @@ else
 	augroup end
 
 	" gruvbox
-	colorscheme gruvbox
+	let g:solarized_statusline="normal"
+	colorscheme solarized8_flat
 	set background=dark
 endif
