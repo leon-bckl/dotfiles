@@ -44,6 +44,7 @@ set shiftwidth=0
 
 " Custom mappings
 map <space> <leader>
+nnoremap <silent> <leader>w :q<CR>
 nnoremap <leader>m :wa \| silent! make! \| cwindow<CR>
 nnoremap <silent> <leader>e :Explore<CR>
 let g:netrw_banner=0
@@ -65,25 +66,27 @@ noremap <C-b> <C-b>M
 nnoremap n nzz
 nnoremap N Nzz
 
-command! BD :bp \| sp \| bn \| bd
 command! W w
+command! BD :bp | sp | bn | bw
 command! -range=% FormatJson silent <line1>,<line2>!python3 -m json.tool
 
 " Open a new scratch buffer that cannot be saved or use the existing one
 function! s:OpenScratchBuffer()
-	let buf = bufnr('scratch')
+	let buf = bufnr('__scratch__')
 	if buf != -1
 		execute 'buffer' . buf
 	else
 		enew
-		file scratch
+		file __scratch__
 	endif
 
 	setlocal buftype=nofile
 	setlocal bufhidden=hide
 	setlocal noswapfile
+	setlocal buflisted
 endfunction
 command! Scratch call <SID>OpenScratchBuffer()
+nnoremap <leader>s :Scratch<CR>
 
 " Remove all lines from quickfix that do not point to a file location
 function! s:CleanQuickFixList()
