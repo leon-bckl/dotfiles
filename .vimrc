@@ -262,7 +262,7 @@ else
 	Plug 'markonm/traces.vim'
 	Plug 'nacitar/a.vim'
 	Plug 'Raimondi/delimitMate'
-	Plug 'lifepillar/vim-solarized8'
+	Plug 'yuttie/sublimetext-spacegray.vim'
 
 	if !has('win32')
 		Plug 'puremourning/vimspector'
@@ -364,6 +364,6 @@ else
 
 	" gruvbox
 	let g:solarized_statusline="normal"
-	colorscheme solarized8_flat
+	colorscheme spacegray-dark
 	set background=dark
 endif
