@@ -255,7 +255,7 @@ else
 	Plug 'junegunn/fzf', {'do': {-> fzf#install()}}
 	Plug 'junegunn/fzf.vim'
 	Plug 'morhetz/gruvbox'
-	Plug 'neoclide/coc.nvim', {'branch': 'release','do': {-> coc#util#install()}}
+	Plug 'neoclide/coc.nvim', {'branch': 'release'}
 	Plug 'tpope/vim-fugitive'
 	Plug 'tpope/vim-surround'
 	Plug 'tpope/vim-commentary'
